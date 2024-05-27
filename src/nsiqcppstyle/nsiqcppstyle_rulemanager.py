@@ -27,29 +27,50 @@
 
 import re
 import sys
+import importlib
+
 
 if sys.version_info.minor < 9:
     from typing import Callable
 else:
     from collections.abc import Callable
 
-from nsiqcppstyle_outputer import _consoleOutputer as console
-from nsiqcppstyle_types import *
-from nsiqcppstyle_util import *  # @UnusedWildImport
+from nsiqcppstyle.nsiqcppstyle_outputer import get_consoleOutputer
+console = get_consoleOutputer()
+# from nsiqcppstyle.nsiqcppstyle_outputer import _consoleOutputer as console
+from nsiqcppstyle.nsiqcppstyle_types import *
+from nsiqcppstyle.nsiqcppstyle_util import *  # @UnusedWildImport
 
+# global the_ruleManager
+the_ruleManager = None
+
+def set_ruleManager(rm):
+    global the_ruleManager
+    the_ruleManager = rm
+    # print('SETTING: ruleManager to', the_ruleManager)
+
+def get_ruleManager():
+    global the_ruleManager
+    # print('GETTING: ruleManager is', the_ruleManager)
+    return the_ruleManager
 
 class RuleManager:
     def __init__(self, runtimePath):
+        # set_ruleManager(self)
+        # print(f'INIT: RuleManager {the_ruleManager} - with runtimePath: {runtimePath}')
         self.availRuleNames = []
-        basePath = os.path.join(runtimePath, "rules")
-        ruleFiles = os.listdir(basePath)
-        rulePattern = re.compile(r"^(.*)\.py$")
-        for eachRuleFile in ruleFiles:
-            if os.path.isfile(os.path.join(basePath, eachRuleFile)):
-                ruleMatch = rulePattern.match(eachRuleFile)
-                if ruleMatch is not None and eachRuleFile.find("__init__") == -1:
-                    ruleName = ruleMatch.group(1)
-                    self.availRuleNames.append(ruleName)
+        # we need to find both builtin rules and contributed rules
+        for rule_path in ["rules", "rules_contrib"]:
+            basePath = os.path.join(runtimePath, rule_path)
+            ruleFiles = os.listdir(basePath)
+            rulePattern = re.compile(r"^(.*)\.py$")
+            for eachRuleFile in ruleFiles:
+                if os.path.isfile(os.path.join(basePath, eachRuleFile)):
+                    ruleMatch = rulePattern.match(eachRuleFile)
+                    if ruleMatch is not None and eachRuleFile.find("__init__") == -1:
+                        ruleName = ruleMatch.group(1)
+                        self.availRuleNames.append(ruleName)
+        # print("FOUND_RULES:", self.availRuleNames)
         self.availRuleCount = len(self.availRuleNames)
         self.availRuleModules = {}
         self.loadedRule = []
@@ -82,15 +103,47 @@ class RuleManager:
         self.rollBackImporter = RollbackImporter()
         console.Out.Ci(console.Separator)
 
+        # print(f'  ABOUT: LoadRules self: {self} - dir: {dir(self)} - checkingRuleNames: {checkingRuleNames}')
         for ruleName in checkingRuleNames:
+            # print('    ruleName:', ruleName)
             count = self.availRuleNames.count(ruleName)
             if count == 0:
                 console.Out.Error("%s does not exist or incompatible." % ruleName)
+                sys.exit(1)
                 continue
             else:
                 console.Out.Info("  - ", ruleName, "is applied.")
-            ruleModule = __import__("rules." + ruleName)
-            self.loadedRule.append(ruleModule)
+            try:
+                if ruleName.startswith('RULE_CONTRIB_'):
+                    # ruleModule = __import__("rules_contrib." + ruleName)
+                    ruleModule = importlib.import_module("rules_contrib." + ruleName)
+                else:
+                    # ruleModule = __import__("rules." + ruleName)
+                    ruleModule = importlib.import_module("rules." + ruleName)
+                # print('JUST_LOADED_DICT:', ruleModule.__dict__.keys())
+                # print('JUST_LOADED_RunRule:', ruleModule.RunRule)
+            except Exception as err:
+                print(f'*warning* - error when loading rule <{ruleName}> - err: {err=}, {type(err)=}')
+                sys.exit(1)
+            try:
+                self.loadedRule.append(ruleModule)
+            except:
+                print(f'*error* - self.loadedRule.append(ruleModule.RunRule) - {ruleModule.RunRule}')
+                exit(1)
+            # # now add to the appropriate rule list according to the
+            # # addition_type variable
+            # print('ADDITION_TYPE:', dir(ruleModule))
+            # print('ADDITION_TYPE:', ruleModule.__dict__.keys())
+            # print('ADDITION_TYPE:', ruleModule.addition_type)
+            # print('ADDITION_TYPE:', ruleModule.RunRule)
+            # # now use the "addition_type" string from the module to
+            # # form an instruction that we can eval()
+            # func_to_eval = 'self.' + ruleModule.addition_type + '(ruleModule.RunRule)'
+            # print('FUNC_TO_EVAL:', func_to_eval)
+            # eval(func_to_eval)
+            # if ruleModule.addition_type == 'AddFileStartRule':
+            #     print(f'self.AddFileStartRule(ruleModule.RunRule)')
+            #     self.AddFileStartRule(ruleModule.RunRule)
         if len(self.loadedRule) == 0:
             console.Out.Ci("  No Rule is specified. Please configure rules in filefilter.txt.")
         console.Out.Ci(console.Separator)
@@ -152,9 +205,15 @@ class RuleManager:
 
     def RunLineRule(self, lexer, line, lineno):
         """Run rules which runs in each lines."""
+        # print(f'      IN_RunLineRule(): {len(self.lineRules)} {lexer} {line} {lineno}')
         for lineRule in self.lineRules:
             data = lexer.Backup()
-            lineRule(lexer, line, lineno)
+            # print(f'        RUNLINERULE: {type(lineRule)} {lineRule.__name__} data: {data}')
+            try:
+                lineRule(lexer, line, lineno)
+            except:
+                print(f'*warning* - exception in lineRule <{lineRule.__name__}> - err: {err=}, {type(err)=}')
+                sys.exit(1)
             lexer.Restore(data)
 
     def RunFileEndRule(self, lexer, filename, dirname):
@@ -228,7 +287,12 @@ class RuleManager:
 
     def AddLineRule(self, user_function: Callable[[Lexer, LineText, LineNumber], None]):
         """Add rule on the each line"""
+        import inspect
+        # print('  FILE_FUNC:', __file__, inspect.currentframe().f_code.co_name)
+        # print('  ADDED_FUNC:', user_function.__qualname__)
+        # print('    ', len(self.lineRules), self.lineRules)
         self.lineRules.append(user_function)
+        # print('    ', len(self.lineRules), self.lineRules)
 
     def AddRule(self, user_function: Callable[[Lexer, ContextStack], None]):
         """Add rule on any token"""
@@ -297,5 +361,9 @@ class RollbackImporter:
                 del sys.modules[modname]
         __builtins__["__import__"] = self.realImport
 
-
-ruleManager = RuleManager(GetRuntimePath())
+# import traceback
+# traceback.print_stack()
+# runtimePath = GetRuntimePath()
+# ruleManager = RuleManager(runtimePath)
+# print('INIT_AND_RUN: ruleManager after:', ruleManager, 'runtimePath:', runtimePath , __file__)
+# traceback.print_stack()

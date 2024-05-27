@@ -11,8 +11,8 @@ Do not start the file name with underbars.
     BdSc.h
 
 """
-from nsiqcppstyle_reporter import *  # @UnusedWildImport
-from nsiqcppstyle_rulemanager import *  # @UnusedWildImport
+from nsiqcppstyle_reporter import Error, DummyToken
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 
@@ -25,7 +25,7 @@ def RunRule(lexer, filename, dirname):
         )
 
 
-ruleManager.AddFileStartRule(RunRule)
+get_ruleManager().AddFileStartRule(RunRule)
 
 ##########################################################################
 # Unit Test
@@ -34,7 +34,7 @@ ruleManager.AddFileStartRule(RunRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFileStartRule(RunRule)
+        get_ruleManager().AddFileStartRule(RunRule)
 
     def test1(self):
         self.Analyze("_thisfile.c", "")

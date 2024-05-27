@@ -17,8 +17,8 @@ if they're found, this rule reports a volation.
 """
 
 import nsiqcppstyle_reporter
-from nsiqcppstyle_rulehelper import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 unix_bufferoverflow_functions = (
@@ -75,7 +75,7 @@ def RunRule(lexer, contextStack):
                 )
 
 
-ruleManager.AddFunctionScopeRule(RunRule)
+get_ruleManager().AddFunctionScopeRule(RunRule)
 
 ##########################################################################
 # Unit Test
@@ -84,7 +84,7 @@ ruleManager.AddFunctionScopeRule(RunRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFunctionScopeRule(RunRule)
+        get_ruleManager().AddFunctionScopeRule(RunRule)
 
     def test1(self):
         self.Analyze(

@@ -16,9 +16,9 @@ It checks the first element and see there is = token.
     }
 
 """
-from nsiqcppstyle_reporter import *
-from nsiqcppstyle_rulehelper import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle_reporter import Error, DummyToken
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 
@@ -35,7 +35,7 @@ def RunRule(lexer, typeName, typeFullName, decl, contextStack, typeContext):
             )
 
 
-ruleManager.AddTypeNameRule(RunRule)
+get_ruleManager().AddTypeNameRule(RunRule)
 
 
 ##########################################################################
@@ -45,7 +45,7 @@ ruleManager.AddTypeNameRule(RunRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddTypeNameRule(RunRule)
+        get_ruleManager().AddTypeNameRule(RunRule)
 
     def test1(self):
         self.Analyze(

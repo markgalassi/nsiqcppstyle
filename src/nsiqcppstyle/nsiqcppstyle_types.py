@@ -3,12 +3,12 @@
 
 from typing import NewType, TypeVar
 
-import nsiqcppstyle_checker
-import nsiqcppstyle_lexer
+import nsiqcppstyle.nsiqcppstyle_checker
+import nsiqcppstyle.nsiqcppstyle_lexer
 
 # Expose already existing types (i.e., Context and ContextStack)
-Context = nsiqcppstyle_checker.Context
-ContextStack = nsiqcppstyle_checker.ContextStack
+Context = nsiqcppstyle.nsiqcppstyle_checker.Context
+ContextStack = nsiqcppstyle.nsiqcppstyle_checker.ContextStack
 
 # A boolean flag denoting whether the function is a declaration (True) or definition (False)
 Declaration = NewType("Declaration", bool)
@@ -23,7 +23,7 @@ FileName = NewType("FileName", str)
 FullFunctionName = NewType("FullFunctionName", str)
 
 # The lexer object used to analyze the source file
-Lexer = NewType("Lexer", nsiqcppstyle_checker.CppLexerNavigator)
+Lexer = NewType("Lexer", nsiqcppstyle.nsiqcppstyle_checker.CppLexerNavigator)
 
 # The line number (> 0) of the <LineType> in the file currently being processed
 LineNumber = NewType("LineNumber", int)
@@ -37,7 +37,7 @@ TargetDirectoryBytes = NewType("TargetDirectoryBytes", bytes)
 TargetDirectory = TypeVar("TargetDirectory", TargetDirectoryStr, TargetDirectoryBytes)
 
 # The token currently being processed
-Token = NewType("Token", nsiqcppstyle_lexer.LexToken)
+Token = NewType("Token", nsiqcppstyle.nsiqcppstyle_lexer.LexToken)
 
 # The typed variable name (e.g., the class name)
 TypeFullName = NewType("TypeFullName", str)

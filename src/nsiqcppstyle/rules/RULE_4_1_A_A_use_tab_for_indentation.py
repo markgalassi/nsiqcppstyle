@@ -18,9 +18,9 @@ In addition, it suppresses the violation when the line contains only spaces and 
     }
 
 """
-from nsiqcppstyle_reporter import *
-from nsiqcppstyle_rulehelper import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle_reporter import Error, DummyToken
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 
@@ -41,7 +41,7 @@ def RunRule(lexer, line, lineno):
         )
 
 
-ruleManager.AddLineRule(RunRule)
+get_ruleManager().AddLineRule(RunRule)
 
 ##########################################################################
 # Unit Test
@@ -50,7 +50,7 @@ ruleManager.AddLineRule(RunRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddLineRule(RunRule)
+        get_ruleManager().AddLineRule(RunRule)
 
     def test1(self):
         self.Analyze("test/thisFile.c", "\tbool CanHave() {\n\t}")

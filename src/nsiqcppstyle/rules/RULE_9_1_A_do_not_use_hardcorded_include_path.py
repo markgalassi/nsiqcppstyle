@@ -12,9 +12,9 @@ Do not use hardcoded paths in #include.
     #include "include/Hello.h"
 """
 
-from nsiqcppstyle_reporter import *
-from nsiqcppstyle_rulehelper import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle_reporter import Error, DummyToken
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 
@@ -28,7 +28,7 @@ def RunRule(lexer, contextStack):
                 nsiqcppstyle_reporter.Error(d, __name__, "Do not use absolute path(%s) in the include path" % value)
 
 
-ruleManager.AddPreprocessRule(RunRule)
+get_ruleManager().AddPreprocessRule(RunRule)
 
 ##########################################################################
 # Unit Test
@@ -37,7 +37,7 @@ ruleManager.AddPreprocessRule(RunRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddPreprocessRule(RunRule)
+        get_ruleManager().AddPreprocessRule(RunRule)
 
     def test1(self):
         self.Analyze(

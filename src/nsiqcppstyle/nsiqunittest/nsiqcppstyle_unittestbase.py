@@ -29,9 +29,10 @@ import unittest
 
 import nsiqcppstyle_checker
 import nsiqcppstyle_reporter
-import nsiqcppstyle_rulemanager
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 import nsiqcppstyle_state
-from nsiqcppstyle_outputer import _consoleOutputer as console
+from nsiqcppstyle.nsiqcppstyle_outputer import get_consoleOutputer
+# from nsiqcppstyle_outputer import _consoleOutputer as console
 
 errors = []
 
@@ -44,16 +45,16 @@ def MockError(token, category, message):
 
 class nct(unittest.TestCase):
     def setUp(self):
-        nsiqcppstyle_rulemanager.ruleManager.ResetRules()
-        nsiqcppstyle_rulemanager.ruleManager.ResetRegisteredRules()
-        console.SetLevel(console.Level.Verbose)
+        get_ruleManager.ResetRules()
+        get_ruleManager().ResetRegisteredRules()
+        get_consoleOutputer().SetLevel(console.Level.Verbose)
         nsiqcppstyle_reporter.Error = MockError
         self.setUpRule()
         global errors
         errors = []
 
     def Analyze(self, filename, data):
-        nsiqcppstyle_checker.ProcessFile(nsiqcppstyle_rulemanager.ruleManager, filename, data)
+        nsiqcppstyle_checker.ProcessFile(get_ruleManager(), filename, data)
 
     def ExpectError(self, msg):
         result = self._CheckErrorContent(msg)

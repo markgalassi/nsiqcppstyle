@@ -37,8 +37,13 @@ __tabversion__ = "3.2"  # Version of table file used
 import copy
 import re
 import types
+import sys
 
-from nsiqcppstyle_util import *
+# from nsiqcppstyle_util import *
+import nsiqcppstyle.nsiqcppstyle_util
+from nsiqcppstyle.nsiqcppstyle_outputer import get_consoleOutputer
+
+console = get_consoleOutputer()
 
 # This tuple contains known string types
 StringTypes = (str, bytes)
@@ -935,6 +940,7 @@ def lex(
     debuglog=None,
     errorlog=None,
 ):
+    # print('ENTER: lex')
     global lexer
     ldict = None
     stateinfo = {"INITIAL": "inclusive"}  # @UnusedVariable

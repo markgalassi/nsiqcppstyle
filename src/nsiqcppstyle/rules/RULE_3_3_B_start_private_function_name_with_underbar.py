@@ -21,9 +21,9 @@ This rule is only applied on the cpp files.
     };
 """
 
-from nsiqcppstyle_reporter import *
-from nsiqcppstyle_rulehelper import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle_reporter import Error, DummyToken
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 
@@ -47,8 +47,8 @@ def RunTypeScopeRule(lexer, contextStack):
             curContext.additional = t.type
 
 
-ruleManager.AddFunctionNameRule(RunRule)
-ruleManager.AddTypeScopeRule(RunTypeScopeRule)
+get_ruleManager().AddFunctionNameRule(RunRule)
+get_ruleManager().AddTypeScopeRule(RunTypeScopeRule)
 
 ##########################################################################
 # Unit Test
@@ -57,8 +57,8 @@ ruleManager.AddTypeScopeRule(RunTypeScopeRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFunctionNameRule(RunRule)
-        ruleManager.AddTypeScopeRule(RunTypeScopeRule)
+        get_ruleManager().AddFunctionNameRule(RunRule)
+        get_ruleManager().AddTypeScopeRule(RunTypeScopeRule)
         global currentVisibility
         currentVisibility = False
 

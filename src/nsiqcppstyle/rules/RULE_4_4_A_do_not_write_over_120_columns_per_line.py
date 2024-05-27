@@ -11,9 +11,9 @@ This rule doesn't recognize tabs. It only think each character as 1 column.
 
     int K; <== OK. It's short.
 """
-from nsiqcppstyle_reporter import *
-from nsiqcppstyle_rulehelper import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle_reporter import Error, DummyToken
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 
@@ -30,7 +30,7 @@ def RunRule(lexer, line, lineno):
             pass
 
 
-ruleManager.AddLineRule(RunRule)
+get_ruleManager().AddLineRule(RunRule)
 
 ##########################################################################
 # Unit Test
@@ -39,7 +39,7 @@ ruleManager.AddLineRule(RunRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddLineRule(RunRule)
+        get_ruleManager().AddLineRule(RunRule)
 
     def test1(self):
         self.Analyze(

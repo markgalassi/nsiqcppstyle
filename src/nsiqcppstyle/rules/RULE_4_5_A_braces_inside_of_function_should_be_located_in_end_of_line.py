@@ -27,9 +27,9 @@ Braces inside of function definitions should be located in the end of line.
         }
     }
 """
-from nsiqcppstyle_reporter import *
-from nsiqcppstyle_rulehelper import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle_reporter import Error, DummyToken
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 
@@ -48,7 +48,7 @@ def RunRule(lexer, contextStack):
                 )
 
 
-ruleManager.AddFunctionScopeRule(RunRule)
+get_ruleManager().AddFunctionScopeRule(RunRule)
 
 ##########################################################################
 # Unit Test
@@ -57,7 +57,7 @@ ruleManager.AddFunctionScopeRule(RunRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFunctionScopeRule(RunRule)
+        get_ruleManager().AddFunctionScopeRule(RunRule)
 
     def test1(self):
         self.Analyze(

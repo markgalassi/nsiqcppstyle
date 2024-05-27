@@ -20,9 +20,9 @@ If the block depth in the function is more than 4, it reports a violation.
 
 
 """
-from nsiqcppstyle_reporter import *
-from nsiqcppstyle_rulehelper import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle_reporter import Error, DummyToken
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 depth = 0
@@ -53,8 +53,8 @@ def RunFunctionScopeRule(lexer, fullName, decl, contextStack, context):
     depth = 0
 
 
-ruleManager.AddFunctionNameRule(RunFunctionScopeRule)
-ruleManager.AddFunctionScopeRule(RunRule)
+get_ruleManager().AddFunctionNameRule(RunFunctionScopeRule)
+get_ruleManager().AddFunctionScopeRule(RunRule)
 
 ##########################################################################
 # Unit Test
@@ -63,8 +63,8 @@ ruleManager.AddFunctionScopeRule(RunRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFunctionNameRule(RunFunctionScopeRule)
-        ruleManager.AddFunctionScopeRule(RunRule)
+        get_ruleManager().AddFunctionNameRule(RunFunctionScopeRule)
+        get_ruleManager().AddFunctionScopeRule(RunRule)
 
     def test1(self):
         self.Analyze(

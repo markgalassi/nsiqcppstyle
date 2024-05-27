@@ -18,9 +18,9 @@ Use reentrant functions. Do not use not reentrant functions.(ctime, strtok, toup
       k = ctime;     <==  Correct. It may be the reentrant function.
   }
 """
-from nsiqcppstyle_reporter import *
-from nsiqcppstyle_rulehelper import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle_reporter import Error, DummyToken
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 no_reenterant_functions = (
@@ -47,7 +47,7 @@ def RunRule(lexer, contextStack):
             nsiqcppstyle_reporter.Error(t, __name__, "Do not use not reentrant function(%s)." % t.value)
 
 
-ruleManager.AddFunctionScopeRule(RunRule)
+get_ruleManager().AddFunctionScopeRule(RunRule)
 
 ##########################################################################
 # Unit Test
@@ -56,7 +56,7 @@ ruleManager.AddFunctionScopeRule(RunRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFunctionScopeRule(RunRule)
+        get_ruleManager().AddFunctionScopeRule(RunRule)
 
     def test1(self):
         self.Analyze(

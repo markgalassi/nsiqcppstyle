@@ -28,9 +28,17 @@
 
 import os
 import traceback
+import sys
 
-from nsiqcppstyle_outputer import _consoleOutputer as console
-from nsiqcppstyle_rulehelper import *  # @UnusedWildImport
+# import site
+# site.addsitedir('nsiqcppstyle', known_paths=None)
+# import nsiqcppstyle
+
+from nsiqcppstyle.nsiqcppstyle_outputer import get_consoleOutputer
+# from nsiqcppstyle.nsiqcppstyle_outputer import _consoleOutputer as console
+#from nsiqcppstyle_rulehelper import *  # @UnusedWildImport
+from nsiqcppstyle.nsiqcppstyle_rulehelper import Search, Match, FindAll
+import nsiqcppstyle.nsiqcppstyle_state as nsiqcppstyle_state
 
 # Reserved words
 
@@ -377,6 +385,7 @@ def t_CPPCOMMENT(t):
 
 
 def t_error(t):
+    console = get_consoleOutputer()
     console.Out.Verbose("Illegal character '%s'" % t.value[0], t.lexer.lineno)
     t.lexer.skip(1)
 
@@ -394,7 +403,7 @@ class CppLexerNavigator:
         self.matchingPair = {}
         self.reverseMatchingPair = {}
         self.ifdefstack = []
-        import nsiqcppstyle_lexer
+        import nsiqcppstyle.nsiqcppstyle_lexer as nsiqcppstyle_lexer
 
         lexer = nsiqcppstyle_lexer.lex()
         self.data = data
@@ -403,6 +412,7 @@ class CppLexerNavigator:
                 try:
                     self.data = f.read()
                 except UnicodeDecodeError as ex:
+                    console = get_consoleOutputer()
                     console.Out.Ci("[ERROR] UnicodeDecodeError in CppLexerNavigator: " + str(ex))
                     console.Out.Ci(
                         "[ERROR] Exception occurred reading file '%s', convert from UTF16LE to UTF8" % (filename),
@@ -1028,9 +1038,11 @@ class _ContextStackStack:
 
 def ProcessFile(ruleManager, file, data=None):
     #    print file
+    # print('ENTER: ProcessFile', file)
     try:
         lexer = CppLexerNavigator(file, data)
     except UnicodeDecodeError:
+        print('EXCEPTION_on: CppLexerNavigator', file, data)
         # If an exception was thrown (i.e., UnicodeDecodeError), it was
         # caught, process, logged to stdout, and the exception was raised
         # again.  At this point in the code, there is nothing else to do
@@ -1243,6 +1255,7 @@ def ConstructContextInfo(lexer):
             t.contextStack = contextStack
             prevLine = t.lineno
         except Exception as e:
+            console = get_consoleOutputer()
             console.Err.Verbose("Context Construction Error : ", t, t.contextStack, e)
             console.Err.Verbose(traceback.format_exc())
 
@@ -1251,6 +1264,7 @@ def RunRules(ruleManager, lexer):
     try:
         ruleManager.RunFileStartRule(lexer, os.path.basename(lexer.filename), os.path.dirname(lexer.filename))
     except Exception as e:
+        console = get_consoleOutputer()
         console.Err.Verbose("Rule Error : ", e)
         console.Err.Verbose(traceback.format_exc())
     currentLine = 0
@@ -1262,7 +1276,12 @@ def RunRules(ruleManager, lexer):
                 break
             if currentLine != t.lineno:
                 currentLine = t.lineno
-                ruleManager.RunLineRule(lexer, lexer.GetCurTokenLine(), currentLine)
+                # print(f'    ABOUT_DISPATCH_RUNLINERULE: {t.lineno}, {currentLine.__str__()}, <{lexer.GetCurTokenLine()}>')
+                try:
+                    ruleManager.RunLineRule(lexer, lexer.GetCurTokenLine(), currentLine)
+                except:
+                    print(f'*warning* - exception in lineRule <{t.lineno}, {currentLine}> - err: {err=}, {type(err)=}')
+                    sys.exit(1)
 
             if t.pp is True:
                 ruleManager.RunPreprocessRule(lexer, t.contextStack)
@@ -1289,10 +1308,13 @@ def RunRules(ruleManager, lexer):
 
                 ruleManager.RunRule(lexer, t.contextStack)
         except Exception as e:
-            console.Err.Verbose("Rule Error : ", t, t.contextStack, e)
+            console = get_consoleOutputer()
+            console.Err.Verbose("Rule Error : ", t, e)
+            # console.Err.Verbose("Rule Error : ", t, t.contextStack, e)
             console.Err.Verbose(traceback.format_exc())
     try:
         ruleManager.RunFileEndRule(lexer, os.path.basename(lexer.filename), os.path.dirname(lexer.filename))
     except Exception as e:
+        console = get_consoleOutputer()
         console.Err.Verbose("Rule Error : ", e)
         console.Err.Verbose(traceback.format_exc())

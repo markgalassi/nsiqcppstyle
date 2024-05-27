@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! /usr/bin/python3
 #
 # Copyright (c) 2009 NHN Inc. All rights reserved.
 # Redistribution and use in source and binary forms, with or without
@@ -30,19 +30,28 @@
 import copy
 import getopt
 import re
+import sys
+import traceback
 
-import nsiqcppstyle_checker
-import nsiqcppstyle_reporter
-import nsiqcppstyle_rulemanager
-import nsiqcppstyle_state
-from __about__ import __version__ as version
-from nsiqcppstyle_outputer import _consoleOutputer as console
-from nsiqcppstyle_util import *
+import nsiqcppstyle.nsiqcppstyle_checker as nsiqcppstyle_checker
+import nsiqcppstyle.nsiqcppstyle_reporter as nsiqcppstyle_reporter
+# import nsiqcppstyle.nsiqcppstyle_rulemanager as nsiqcppstyle_rulemanager
+# import nsiqcppstyle.nsiqcppstyle_rulemanager
+from nsiqcppstyle.nsiqcppstyle_rulemanager import RuleManager, get_ruleManager, set_ruleManager
+# import nsiqcppstyle_rulemanager
+import nsiqcppstyle.nsiqcppstyle_state
+from nsiqcppstyle.__about__ import __version__ as version
+# from nsiqcppstyle.nsiqcppstyle_rulemanager import ruleManager
+from nsiqcppstyle.nsiqcppstyle_outputer import get_consoleOutputer
+# from nsiqcppstyle.nsiqcppstyle_outputer import _consoleOutputer as console
+from nsiqcppstyle.nsiqcppstyle_util import *
 
 ##########################################################################
 title = "nsiqcppstyle: N'SIQ Cpp Style ver " + version + "\n"
 
+# global ruleManager
 
+console = get_consoleOutputer()
 def ShowMessageAndExit(msg, usageOutput=True):
     console.Err.Error(msg)
     if usageOutput:
@@ -181,14 +190,25 @@ def get_parser():
 def main():
     global filename
 
+    # traceback.print_stack()
+    runtimePath = GetRuntimePath()
+    # print('INIT_IN_MAIN: ruleManager before:', get_ruleManager(),
+    #       'runtimePath:', runtimePath , __file__)
+    # nsiqcppstyle_rulemanager.ruleManager = nsiqcppstyle_rulemanager.RuleManager(runtimePath)
+    new_rulemanager = RuleManager(runtimePath)
+    set_ruleManager(new_rulemanager)
+    # nsiqcppstyle_rulemanager.set_ruleManager(nsiqcppstyle_rulemanager.ruleManager)
+    # print('INIT_IN_MAIN: ruleManager after:', get_ruleManager(), 'runtimePath:', runtimePath , __file__)
+    # traceback.print_stack()
+
     parser = get_parser()
     args = parser.parse_args()
     _nsiqcppstyle_state.output_format = args.output
     _nsiqcppstyle_state.showUrl = args.show_url
     filterScope = args.filter_scope
     targetPaths = GetRealTargetPaths(args.target_path)
-    outputPath = args.output_path
-    filterPath = args.filter_path
+    outputPath = os.path.expanduser(args.output_path)
+    filterPath = os.path.expanduser(args.filter_path)
     filterStringList = args.filter_string
     noBase = args.noBase
     varMap = GetCliKeyValueMap(args.var)
@@ -227,7 +247,12 @@ def main():
                 ShowMessageAndExit("OutputPath(-o) should be provided to analyze multiple targets")
         else:
             outputPath = GetOutputPath(targetPaths[0], outputPath)
-        ruleManager = nsiqcppstyle_rulemanager.ruleManager
+        # import traceback
+        # traceback.print_stack()
+        # print('INIT: ruleManager before:', nsiqcppstyle_rulemanager.ruleManager, __file__)
+        # ruleManager = nsiqcppstyle_rulemanager.ruleManager
+        # print('INIT: ruleManager after:', nsiqcppstyle_rulemanager.ruleManager, __file__)
+        # traceback.print_stack()
 
         cExtendstionSet = extLangMap.get("C/C++")
 
@@ -242,6 +267,7 @@ def main():
             console.Out.Ci(console.Separator)
             console.Out.Ci("=  Analyzing %s " % targetName)
 
+            filterPath = os.path.expanduser(filterPath)
             if filterPath != "":
                 filefilterPath = filterPath
             elif os.path.isfile(targetPath):
@@ -268,12 +294,22 @@ def main():
                 ShowMessageAndExit("Error!. Rules must be set in %s" % filefilterPath, False)
                 continue
 
-            ruleManager.LoadRules(filter.nsiqCppStyleRules)
-            ruleManager.RunSessionStartRules()
+            try:
+                get_ruleManager().LoadRules(filter.nsiqCppStyleRules)
+            except:
+                print(f'*warning* - error when LoadRules - err: {err=}, {type(err)=}')
+                traceback.print_stack()
+                sys.exit(1)
+            try:
+                get_ruleManager().RunSessionStartRules()
+            except:
+                print(f'*warning* - error when RunSessionStartRules - err: {err=}, {type(err)=}')
+                traceback.print_stack()
+                sys.exit(1)
 
             _nsiqcppstyle_state.checkers = filter.nsiqCppStyleRules
             _nsiqcppstyle_state.varMap = filter.varMap
-            nsiqcppstyle_reporter.ReportRules(ruleManager.availRuleNames, filter.nsiqCppStyleRules)
+            nsiqcppstyle_reporter.ReportRules(get_ruleManager().availRuleNames, filter.nsiqCppStyleRules)
 
             console.Out.Info(filter.to_string())
             console.Out.Ci(console.Separator)
@@ -283,7 +319,7 @@ def main():
             if os.path.isfile(targetPath):
                 fileExtension = targetPath[targetPath.rfind(".") + 1 :]
                 if fileExtension in cExtendstionSet:
-                    ProcessFile(ruleManager, targetPath, analyzedFiles)
+                    ProcessFile(get_ruleManager(), targetPath, analyzedFiles)
 
             # if the target is directory, analyze it with filefilter and
             # basefilelist
@@ -307,27 +343,29 @@ def main():
                             and filter.CheckFileInclusion(basePart)
                         ):
                             nsiqcppstyle_reporter.StartFile(os.path.dirname(basePart), fname)
-                            ProcessFile(ruleManager, eachFile, analyzedFiles)
+                            ProcessFile(get_ruleManager(), eachFile, analyzedFiles)
                             nsiqcppstyle_reporter.EndFile()
-            ruleManager.RunProjectRules(targetPath)
+            get_ruleManager().RunProjectRules(targetPath)
             nsiqcppstyle_reporter.EndTarget()
 
         nsiqcppstyle_reporter.ReportSummaryToScreen(analyzedFiles, _nsiqcppstyle_state, filter)
         nsiqcppstyle_reporter.CloseReport(_nsiqcppstyle_state.output_format)
-        ruleManager.RunSessionEndRules()
+        get_ruleManager().RunSessionEndRules()
         return _nsiqcppstyle_state.error_count
 
     except Exception as err:
+        print(f'*warning* - exception in main - err: {err=}, {type(err)=}')
+        traceback.print_stack()
         console.Err.Error(err)
         console.Err.Error("for help use --help")
-        sys.exit(-1)
-
+        raise
+        sys.exit(1)
 
 # 3
 
 
 def ProcessFile(ruleManager, file, analyzedFiles):
-    console.Out.Info("Processing: ", file)
+    # console.Out.Info("Processing: ", file)
     nsiqcppstyle_checker.ProcessFile(ruleManager, file)
     analyzedFiles.append(file)
 
@@ -345,8 +383,8 @@ def GetRealTargetPaths(args):
         ShowMessageAndExit("Error!: Target directory must be provided")
     targetPaths = []
     for eachTarget in args:
-        realPath = os.path.realpath(eachTarget)
-        targetPaths.append(realPath)
+        realPath = os.path.realpath(os.path.expanduser(eachTarget))
+        targetPaths.append(os.path.expanduser(realPath))
         #       CheckPathPermission(realPath, "Target directory")
         if not os.path.exists(realPath):
             ShowMessageAndExit("Error!: Target directory %s does not exist" % eachTarget)
@@ -638,8 +676,8 @@ class NullBaseFileList:
 
 
 def ShowRuleList():
-    nsiqcppstyle_rulemanager.ruleManager.availRuleNames.sort()
-    for rule in nsiqcppstyle_rulemanager.ruleManager.availRuleNames:
+    get_ruleManager().availRuleNames.sort()
+    for rule in get_ruleManager().availRuleNames:
         if rule.startswith("RULE_"):
             print("~", rule)
     sys.exit(1)
@@ -654,9 +692,9 @@ def CheckPathPermission(path, folderrole):
 ##########################################################################
 
 
-_nsiqcppstyle_state = nsiqcppstyle_state._nsiqcppstyle_state
+_nsiqcppstyle_state = nsiqcppstyle.nsiqcppstyle_state._nsiqcppstyle_state
 
 
-if __name__ == "__main__":
-    sys.path.append(GetRuntimePath())
-    sys.exit(main())
+# if __name__ == "__main__":
+#     sys.path.append(GetRuntimePath())
+#     sys.exit(main())

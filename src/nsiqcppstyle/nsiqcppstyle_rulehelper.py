@@ -27,7 +27,7 @@
 
 import sre_compile
 
-import nsiqcppstyle_state
+import nsiqcppstyle.nsiqcppstyle_state as nsiqcppstyle_state
 
 _regexp_compile_cache = {}
 

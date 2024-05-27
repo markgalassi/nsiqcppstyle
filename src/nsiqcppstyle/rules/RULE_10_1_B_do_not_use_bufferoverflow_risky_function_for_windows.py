@@ -42,7 +42,7 @@ if they're found, this rule reports a violation.
 """
 
 import nsiqcppstyle_reporter
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 windows_bufferoverflow_functions = (
@@ -95,7 +95,7 @@ def RunRule(lexer, contextStack):
                 nsiqcppstyle_reporter.Error(t, __name__, "Do not use burfferoverflow risky function(%s)" % t.value)
 
 
-ruleManager.AddFunctionScopeRule(RunRule)
+get_ruleManager().AddFunctionScopeRule(RunRule)
 
 ##########################################################################
 # Unit Test
@@ -104,7 +104,7 @@ ruleManager.AddFunctionScopeRule(RunRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFunctionScopeRule(RunRule)
+        get_ruleManager().AddFunctionScopeRule(RunRule)
 
     def test1(self):
         self.Analyze(

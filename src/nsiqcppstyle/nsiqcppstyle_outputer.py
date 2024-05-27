@@ -80,7 +80,8 @@ class ConsoleOuputer:
             self.__logger.info(self.__Format(*msgArgs))
 
         def Ci(self, *msgArgs):
-            self.__logger.warning(self.__Format(*msgArgs))
+            output = self.__Format(*msgArgs)
+            self.__logger.warning(output)
 
         def Error(self, *msgArgs):
             self.__logger.error(self.__Format(*msgArgs))
@@ -90,7 +91,19 @@ class ConsoleOuputer:
 
         def __Format(self, *msgArgs):
             # Format output the same way a direct call to print would
-            return " ".join(str(a) for a in msgArgs)
+            result = " ".join(str(a) for a in msgArgs)
+            return result
 
 
-_consoleOutputer = ConsoleOuputer()
+# global _the_consoleOutputer
+# _the_consoleOutputer = None
+# print('BEFORE_INIT:', _the_consoleOutputer)
+# if not _the_consoleOutputer:
+#     # global _the_consoleOutputer
+#     print('INIT_THE_CONSOLE_OUTPUTER')
+_the_consoleOutputer = ConsoleOuputer()
+# print('AFTER_INIT:', _the_consoleOutputer)
+
+def get_consoleOutputer():
+    # print('GETTING:', _the_consoleOutputer)
+    return _the_consoleOutputer

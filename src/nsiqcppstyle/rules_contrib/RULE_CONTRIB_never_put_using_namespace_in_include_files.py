@@ -18,12 +18,12 @@ It's OK in .c* files.
 """
 
 from nsiqunittest.nsiqcppstyle_unittestbase import *
-from nsiqcppstyle_rulehelper import *
-from nsiqcppstyle_reporter import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
+import nsiqcppstyle.nsiqcppstyle_reporter as nsiqcppstyle_reporter
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 
 
-def RunFileStartRule(lexer, file_basename, file_dirname):
+def RunRule(lexer, file_basename, file_dirname):
     if lexer.filename[-2:] != '.h' and not lexer.filename[-4:] in ('.hpp', '.hxx'):
         console.Out.Verbose('hey, we are NOT in a .h file')
         return # get out non-header files: this rule does not apply there
@@ -35,7 +35,7 @@ def RunFileStartRule(lexer, file_basename, file_dirname):
                   'Never put "using namespace" at top level in include files')
     pass
 
-ruleManager.AddFileStartRule(RunFileStartRule)
+get_ruleManager().AddFileStartRule(RunRule)
 
 ##########################################################################
 # Unit Test
@@ -44,7 +44,7 @@ ruleManager.AddFileStartRule(RunFileStartRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFunctionNameRule(RunRule)
+        get_ruleManager().AddFunctionNameRule(RunRule)
 
     def test1(self):
         self.Analyze("thisfile.hpp", "int k() {%s};"

@@ -20,8 +20,8 @@ Do not use same filenames more than once.
 """
 from typing import Dict, List
 
-from nsiqcppstyle_reporter import *  # @UnusedWildImport
-from nsiqcppstyle_rulemanager import *  # @UnusedWildImport
+from nsiqcppstyle_reporter import Error, DummyToken
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 filenameMap: Dict[str, List[str]] = {}
@@ -48,7 +48,7 @@ def RunRule(lexer, filename, dirname):
         )
 
 
-ruleManager.AddFileStartRule(RunRule)
+get_ruleManager().AddFileStartRule(RunRule)
 
 ##########################################################################
 # Unit Test
@@ -57,7 +57,7 @@ ruleManager.AddFileStartRule(RunRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFileStartRule(RunRule)
+        get_ruleManager().AddFileStartRule(RunRule)
         global filenameMap
         filenameMap = {}
 

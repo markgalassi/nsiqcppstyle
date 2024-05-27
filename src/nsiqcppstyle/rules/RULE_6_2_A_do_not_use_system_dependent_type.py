@@ -12,9 +12,9 @@ Instead use system independent types (int16_t, int64_t, int32_t) respectively.
 
     int32_t b;
 """
-from nsiqcppstyle_reporter import *
-from nsiqcppstyle_rulehelper import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle_reporter import Error, DummyToken
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 systemDependentType = {"SHORT": "int16_t", "LONG": "int64_t", "INT": "int32_t"}
@@ -35,7 +35,7 @@ def RunRule(lexer, contextStack):
             )
 
 
-ruleManager.AddRule(RunRule)
+get_ruleManager().AddRule(RunRule)
 
 
 ##########################################################################
@@ -45,7 +45,7 @@ ruleManager.AddRule(RunRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddRule(RunRule)
+        get_ruleManager().AddRule(RunRule)
 
     def test1(self):
         self.Analyze(

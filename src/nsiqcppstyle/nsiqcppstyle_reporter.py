@@ -29,10 +29,14 @@ import csv
 import os
 import sys
 
-import nsiqcppstyle_checker
-import nsiqcppstyle_rulemanager
-import nsiqcppstyle_state
-from nsiqcppstyle_outputer import _consoleOutputer as console
+import nsiqcppstyle.nsiqcppstyle_checker as nsiqcppstyle_checker
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
+import nsiqcppstyle.nsiqcppstyle_state as nsiqcppstyle_state
+from nsiqcppstyle.nsiqcppstyle_outputer import get_consoleOutputer
+console = get_consoleOutputer()
+
+# from nsiqcppstyle.nsiqcppstyle_outputer import _consoleOutputer as console
+# from nsiqcppstyle.nsiqcppstyle_outputer import ConsoleOutputer
 
 ##########################################################################
 csvfile = None
@@ -67,9 +71,10 @@ def ReportSummaryToScreen(analyzedFiles, nsiqcppstyle_state, filter):
     buildQuality = 0
     if fileCount != 0:
         buildQuality = (fileCount - violatedFileCount) * 100.0 / fileCount
+    # console = ConsoleOutputer()
     console.Out.Ci("\n")
     console.Out.Ci("=================================== Summary Report ===================================")
-    console.Out.Ci(" ** Total Available Rules     : %d" % nsiqcppstyle_rulemanager.ruleManager.availRuleCount)
+    console.Out.Ci(" ** Total Available Rules     : %d" % get_ruleManager().availRuleCount)
     console.Out.Ci(" ** Total Applied Rules       : %d" % len(nsiqcppstyle_state.checkers))
     console.Out.Ci(" ** Total Violated Rules      : %d" % len(nsiqcppstyle_state.errorPerChecker.keys()))
     console.Out.Ci(" ** Total Errors Occurs       : %d" % nsiqcppstyle_state.error_count)
@@ -201,6 +206,7 @@ def ErrorInternal(t, ruleName, message):
     """
     Print error
     """
+    print('*error* - ', t, ruleName, message)
     global rule
 
     # Remove the known prefix of "rules." from the path

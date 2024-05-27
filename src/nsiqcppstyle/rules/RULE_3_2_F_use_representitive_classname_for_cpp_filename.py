@@ -36,8 +36,8 @@ If the class/struct name starts with "C", "C" can be ommited in the file name.
 
 """
 
-from nsiqcppstyle_reporter import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle_reporter import Error, DummyToken
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 classname = None
@@ -80,10 +80,10 @@ def RunFileEndRule(lexer, filename, dirname):
         )
 
 
-ruleManager.AddFileStartRule(RunFileStartRule)
-ruleManager.AddTypeNameRule(RunTypeNameRule)
-ruleManager.AddFunctionNameRule(RunFunctionNameRule)
-ruleManager.AddFileEndRule(RunFileEndRule)
+get_ruleManager().AddFileStartRule(RunFileStartRule)
+get_ruleManager().AddTypeNameRule(RunTypeNameRule)
+get_ruleManager().AddFunctionNameRule(RunFunctionNameRule)
+get_ruleManager().AddFileEndRule(RunFileEndRule)
 
 ##########################################################################
 # Unit Test
@@ -92,10 +92,10 @@ ruleManager.AddFileEndRule(RunFileEndRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFileStartRule(RunFileStartRule)
-        ruleManager.AddTypeNameRule(RunTypeNameRule)
-        ruleManager.AddFunctionNameRule(RunFunctionNameRule)
-        ruleManager.AddFileEndRule(RunFileEndRule)
+        get_ruleManager().AddFileStartRule(RunFileStartRule)
+        get_ruleManager().AddTypeNameRule(RunTypeNameRule)
+        get_ruleManager().AddFunctionNameRule(RunFunctionNameRule)
+        get_ruleManager().AddFileEndRule(RunFileEndRule)
 
     def test1(self):
         self.Analyze(

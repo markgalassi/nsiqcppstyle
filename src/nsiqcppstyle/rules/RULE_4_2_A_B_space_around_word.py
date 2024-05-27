@@ -28,9 +28,9 @@ It doens't check 'switch' and 'while' because they are commonly attached followi
     }
 """
 
-from nsiqcppstyle_reporter import *
-from nsiqcppstyle_rulehelper import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle_reporter import Error, DummyToken
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 words = (
@@ -51,8 +51,8 @@ def RunRule(lexer, contextStack):
                     nsiqcppstyle_reporter.Error(t, __name__, "Put space before/after word '%s'." % t.value)
 
 
-ruleManager.AddFunctionScopeRule(RunRule)
-ruleManager.AddPreprocessRule(RunRule)
+get_ruleManager().AddFunctionScopeRule(RunRule)
+get_ruleManager().AddPreprocessRule(RunRule)
 
 ##########################################################################
 # Unit Test
@@ -61,8 +61,8 @@ ruleManager.AddPreprocessRule(RunRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFunctionScopeRule(RunRule)
-        ruleManager.AddPreprocessRule(RunRule)
+        get_ruleManager().AddFunctionScopeRule(RunRule)
+        get_ruleManager().AddPreprocessRule(RunRule)
 
     def test1(self):
         self.Analyze(

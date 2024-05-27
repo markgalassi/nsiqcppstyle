@@ -87,7 +87,9 @@ def SessionStartRule():
 def SessionEndRule():
     print("SessionEnd    ()")
 
-
+# addition_type = 'AddFunctionScopeRule'
+# print('FILE:', __file__, 'addition_type:', addition_type)
+print('FILE:', __file__, 'ruleManager:', ruleManager)
 ruleManager.AddFunctionScopeRule(FunctionScopeRule)
 ruleManager.AddFunctionNameRule(FunctionNameRule)
 ruleManager.AddPreprocessRule(PreprocessRule)

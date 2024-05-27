@@ -19,9 +19,9 @@ Only alphabets, numbers can be used for a cpp filename.
     testdir1/test_1.c <== Don't care. it's c file.
 """
 
-from nsiqcppstyle_reporter import *
-from nsiqcppstyle_rulehelper import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle_reporter import Error, DummyToken
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 
@@ -34,7 +34,7 @@ def RunRule(lexer, filename, dirname):
         )
 
 
-ruleManager.AddFileStartRule(RunRule)
+get_ruleManager().AddFileStartRule(RunRule)
 
 ##########################################################################
 # Unit Test
@@ -43,7 +43,7 @@ ruleManager.AddFileStartRule(RunRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFileStartRule(RunRule)
+        get_ruleManager().AddFileStartRule(RunRule)
 
     def test1(self):
         self.Analyze("test/thisfile.cpp", "")

@@ -1,5 +1,5 @@
 """
-Conditionals should be multiline, LH bracket on same line, brackets aligned, .
+Conditionals should be multiline, LH bracket not alone on line line, brackets aligned, .
 
 
 == Violation ==
@@ -25,9 +25,9 @@ Conditionals should be multiline, LH bracket on same line, brackets aligned, .
     }
 """
 
-from nsiqcppstyle_rulehelper import  *
-from nsiqcppstyle_reporter import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
+import nsiqcppstyle.nsiqcppstyle_reporter as nsiqcppstyle_reporter
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 
 def RunRule(lexer, contextStack) :
     t = lexer.GetCurToken()
@@ -39,8 +39,12 @@ def RunRule(lexer, contextStack) :
 
         t3 = lexer.GetNextTokenInType("LBRACE", False, True)
         if t3 != None:
-            if t.lineno != t3.lineno:
-                nsiqcppstyle_reporter.Error(t3, __name__, "Left brace must be on the same line as the conditional keyword '%s'. " % t.value)
+            # we need to make sure that LBRACE is not on a line by itself, so get the previous token and see if it's on this line
+            prevToken = lexer.GetPrevTokenSkipWhiteSpace()
+            if prevToken.lineno != t3.lineno:
+                nsiqcppstyle_reporter.Error(t3, __name__, "Left brace cannot be first token in line '%s'. " % t.value)
+            # if t.lineno != t3.lineno:
+            #     nsiqcppstyle_reporter.Error(t3, __name__, "Left brace must be on the same line as the conditional keyword '%s'. " % t.value)
             t4 = lexer.GetNextMatchingToken(False)
             prevToken = lexer.GetPrevTokenSkipWhiteSpaceAndCommentAndPreprocess()
             if t4 != None and prevToken != None and \
@@ -49,7 +53,7 @@ def RunRule(lexer, contextStack) :
             if t4.lineno != t.lineno and GetRealColumn(t4) != GetRealColumn(t) :
                 nsiqcppstyle_reporter.Error(t4, __name__, "The closing brace should be located in same column as the keyword '%s'" % t.value)
 
-ruleManager.AddFunctionScopeRule(RunRule)
+get_ruleManager().AddFunctionScopeRule(RunRule)
 
 
 
@@ -64,7 +68,7 @@ ruleManager.AddFunctionScopeRule(RunRule)
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFunctionScopeRule(RunRule)
+        get_ruleManager().AddFunctionScopeRule(RunRule)
     def test1(self):
         self.Analyze("test/thisFile.c", 
 """

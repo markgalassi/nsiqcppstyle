@@ -20,9 +20,9 @@ It's rule for only Unix / Linux C/C++ code.
 
 """
 
-from nsiqcppstyle_reporter import *
-from nsiqcppstyle_rulehelper import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle_reporter import Error, DummyToken
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 
@@ -41,7 +41,7 @@ def RunRule(lexer, fullName, decl, contextStack, context):
         nsiqcppstyle_reporter.Error(t, __name__, "Do not start function name(%s) with uppercase" % fullName)
 
 
-ruleManager.AddFunctionNameRule(RunRule)
+get_ruleManager().AddFunctionNameRule(RunRule)
 
 ##########################################################################
 # Unit Test
@@ -50,7 +50,7 @@ ruleManager.AddFunctionNameRule(RunRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFunctionNameRule(RunRule)
+        get_ruleManager().AddFunctionNameRule(RunRule)
 
     def test1(self):
         self.Analyze(

@@ -12,15 +12,15 @@ Only alphabets, numbers and underbars can be used for a filename.
     testdir1/test_1.c 
     /testdir/test-1.c  - is used.
 """
-from nsiqcppstyle_reporter import * #@UnusedWildImport
-from nsiqcppstyle_rulemanager import * #@UnusedWildImport
-from nsiqcppstyle_checker import * #@UnusedWildImport
+import nsiqcppstyle.nsiqcppstyle_reporter as nsiqcppstyle_reporter
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
+import nsiqcppstyle.nsiqcppstyle_checker as nsiqcppstyle_checker
 def RunRule(lexer, filename, dirname) :
     if not Match(r"^[\-_A-Za-z0-9\.]*$", filename) :
         nsiqcppstyle_reporter.Error(DummyToken(lexer.filename, "", 0, 0), __name__,
           'Do not use special characters in file name (%s).' % filename)
 
-ruleManager.AddFileStartRule(RunRule)
+get_ruleManager().AddFileStartRule(RunRule)
 
 
 
@@ -34,7 +34,7 @@ ruleManager.AddFileStartRule(RunRule)
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFileStartRule(RunRule)
+        get_ruleManager().AddFileStartRule(RunRule)
     
     def test1(self):
         self.Analyze("test2/!thisfile22.c", "")

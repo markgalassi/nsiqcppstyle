@@ -12,9 +12,9 @@ Only alphabets, numbers and underbars can be used for a filename.
     testdir/test.c
     testdir1/test_1.c
 """
-from nsiqcppstyle_checker import *  # @UnusedWildImport
-from nsiqcppstyle_reporter import *  # @UnusedWildImport
-from nsiqcppstyle_rulemanager import *  # @UnusedWildImport
+import nsiqcppstyle.nsiqcppstyle_checker as nsiqcppstyle_checker
+from nsiqcppstyle_reporter import Error, DummyToken
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 
@@ -27,7 +27,7 @@ def RunRule(lexer, filename, dirname):
         )
 
 
-ruleManager.AddFileStartRule(RunRule)
+get_ruleManager().AddFileStartRule(RunRule)
 
 ##########################################################################
 # Unit Test
@@ -36,7 +36,7 @@ ruleManager.AddFileStartRule(RunRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFileStartRule(RunRule)
+        get_ruleManager().AddFileStartRule(RunRule)
 
     def test1(self):
         self.Analyze("test/this-file.c", "")

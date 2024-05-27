@@ -29,7 +29,8 @@ import unittest
 
 import nsiqcppstyle_checker
 import nsiqcppstyle_state
-from nsiqcppstyle_outputer import _consoleOutputer as console
+from nsiqcppstyle.nsiqcppstyle_outputer import get_consoleOutputer
+# from nsiqcppstyle_outputer import _consoleOutputer as console
 
 
 class unitTest(unittest.TestCase):
@@ -198,6 +199,7 @@ void function2() {
 int a;
 """
 
+        console = get_consoleOutputer()
         console.SetLevel(console.Level.Verbose)
         navigator = nsiqcppstyle_checker.CppLexerNavigator("a.cpp", data)
         nsiqcppstyle_checker.ConstructContextInfo(navigator)

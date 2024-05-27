@@ -42,8 +42,8 @@ It only checks public, protected as well as private funcions.
      void FunctionD(); <== Don't care. it's defined in c file.
 """
 
-from nsiqcppstyle_rulehelper import *
-from nsiqcppstyle_rulemanager import *
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 
@@ -69,7 +69,7 @@ def RunRule(lexer, fullName, decl, contextStack, context):
         )
 
 
-ruleManager.AddFunctionNameRule(RunRule)
+get_ruleManager().AddFunctionNameRule(RunRule)
 
 
 def RunTypeScopeRule(lexer, contextStack):
@@ -80,7 +80,7 @@ def RunTypeScopeRule(lexer, contextStack):
             curContext.additional = t.type
 
 
-ruleManager.AddTypeScopeRule(RunTypeScopeRule)
+get_ruleManager().AddTypeScopeRule(RunTypeScopeRule)
 
 
 ##########################################################################
@@ -90,8 +90,8 @@ ruleManager.AddTypeScopeRule(RunTypeScopeRule)
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddFunctionNameRule(RunRule)
-        ruleManager.AddTypeScopeRule(RunTypeScopeRule)
+        get_ruleManager().AddFunctionNameRule(RunRule)
+        get_ruleManager().AddTypeScopeRule(RunTypeScopeRule)
 
     def test1(self):
         self.Analyze(

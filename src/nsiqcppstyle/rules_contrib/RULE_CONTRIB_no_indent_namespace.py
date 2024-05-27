@@ -44,9 +44,9 @@ int f[2][2] = {{1,1}
 } /* nsC */
 """
 
-from nsiqcppstyle_reporter import *
-from nsiqcppstyle_rulemanager import *
-from nsiqcppstyle_rulehelper import *
+import nsiqcppstyle.nsiqcppstyle_reporter as nsiqcppstyle_reporter
+from nsiqcppstyle.nsiqcppstyle_rulemanager import get_ruleManager
+from nsiqcppstyle.nsiqcppstyle_rulehelper import *
 import re
 
 # regex match for a completed statement (e.g. one ending in a semicolon or
@@ -83,7 +83,7 @@ def RunRule(lexer, line, lineno) :
             # reset line state if we switch context
             lineComplete = True
 
-ruleManager.AddLineRule(RunRule)
+get_ruleManager().AddLineRule(RunRule)
 
 ###########################################################################################
 # Unit Test
@@ -93,7 +93,7 @@ from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 class testRule(nct):
     def setUpRule(self):
-        ruleManager.AddRule(RunRule)
+        get_ruleManager().AddRule(RunRule)
         
     def test1(self):
         self.Analyze("thisfile.c","""
