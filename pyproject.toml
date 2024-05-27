@@ -24,6 +24,9 @@ classifiers = [
 ]
 dependencies = []
 
+[project.scripts]
+nsiqcppstyle = "nsiqcppstyle.nsiqcppstyle_exe:main"
+
 [project.optional-dependencies]
 dev = ["pip_search"]
 test = ["pytest == 7.4.*"]
@@ -34,7 +37,7 @@ Issues = "https://github.com/kunaltyagi/nsiqcppstyle/issues"
 Source = "https://github.com/kunaltyagi/nsiqcppstyle"
 
 [tool.hatch.version]
-path = "__about__.py"
+path = "src/nsiqcppstyle/__about__.py"
 
 [tool.hatch.metadata]
 allow-direct-references = true

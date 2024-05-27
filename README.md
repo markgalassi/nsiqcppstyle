@@ -1,5 +1,5 @@
 [![Tests CI](https://github.com/kunaltyagi/nsiqcppstyle/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/kunaltyagi/nsiqcppstyle/actions/workflows/tests.yml)
-# About
+# About nsiqcppstyle
 
 nsiqcppstyle is one of the most customizable cpp style checkers about.
 
@@ -272,7 +272,24 @@ nsiqcppstyle --ci --output=xml folder_to_be_analyzed
 ```
 Single files are also allowed in this format
 
-# Credits
+## Release and packaging
+
+At this time 2024-05-25, Mark Galassi <mark@galassi.org> prepares
+RPM packages like this:
+
+1. Prep work on RPM-based systems:
+```
+sudo dnf install -y rpmlint python3-devel python3-tomli python3-hatchling python3-tox-current-env
+python3 -m pip install --upgrade build
+```
+
+2. Every time do this:
+```
+python3 -m build
+rpmbuild --define="_sourcedir `pwd`/dist" -ba --nodeps nsiqcppstyle.spec 
+```
+
+## Credits
 
 All ther development upto Aug 18 was done by [JunHo Yoon](https://code.google.com/u/103331831595695901509/). For more information, contact him on twitter : [@Junotest](https://twitter.com/junotest)
 
