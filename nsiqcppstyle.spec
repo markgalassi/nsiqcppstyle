@@ -85,9 +85,11 @@ Summary:        %{summary}
 
 %if 0%{?rhel} != 7
 %files -n python3-nsiqcppstyle -f %{pyproject_files}
-/usr/bin/*
+%{_bindir}/*
 %else
 %files -n python3-nsiqcppstyle
+%{_bindir}/*
+/opt/rh/rh-python38/root/usr/lib/python3.8/*
 %endif
 
 %changelog
