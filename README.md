@@ -280,7 +280,9 @@ RPM packages like this:
 1. Prep work on RPM-based systems:
 ```
 sudo dnf install -y rpmlint python3-devel python3-tomli python3-hatchling python3-tox-current-env
-python3 -m pip install --upgrade build
+# (on el7: sudo yum install -y rh-python38-python-pip)
+# (on el7: sudo yum install -y rpmlint python3-devel python3-tomli python3-hatchling python3-tox-current-env)
+python3 -m pip install --user --upgrade build
 ```
 
 2. Every time do this:
