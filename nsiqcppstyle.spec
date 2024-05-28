@@ -14,7 +14,6 @@ Source:         nsiqcppstyle-%{version}.tar.gz
 
 BuildArch:      noarch
 
-Requires: rh-python38-python(abi) = 3.8
 %if 0%{?rhel} == 7
 Requires: rh-python38-python(abi) = 3.8
 %else
@@ -84,12 +83,7 @@ Summary:        %{summary}
 # For python3-nsiqcppstyle, %%{pyproject_files} handles code files and %%license,
 # but executables and documentation must be listed in the spec file:
 
-%{?el7:%files -n python3-nsiqcppstyle}
-%{?el8:%files -n python3-nsiqcppstyle -f %{pyproject_files}}
-%{?el9:%files -n python3-nsiqcppstyle -f %{pyproject_files}}
-%{?fedora:%files -n python3-nsiqcppstyle -f %{pyproject_files}}
-%doc README.md
-%{_bindir}/*
-/opt/rh/rh-python38/root/usr/lib/python3.8/*
+%files -n python3-nsiqcppstyle -f %{pyproject_files}
+/usr/bin/*
 
 %changelog
