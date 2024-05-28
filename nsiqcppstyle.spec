@@ -45,7 +45,6 @@ Summary:        %{summary}
 
 %install
 #py3_install
-#py3_install
 #{?el7:python3.8 -m pip install -- --install-scripts=#{_bindir} --install-data=#{_datadir}}
 #{?el7:#python3.8py3__python3 -m pip install --target ${RPM_BUILD_DIR}/usr}
 %{?el7:/opt/rh/rh-python38/root/usr/bin/python3.8 -m pip install -I dist/*.whl --target ${RPM_BUILD_ROOT}/%python38python3_sitelib}
@@ -53,7 +52,6 @@ Summary:        %{summary}
 %{?el7:cp el7_only_bin_prog ${RPM_BUILD_ROOT}/usr/bin/nsiqcppstyle}
 #{?el7:#python3.8py3_install_wheel}
 #{?el7:#python38py3_install}
->>>>>>> a8e27a59c9e4f9f5bcdc7c07dec9a5b2eb24c7cc
 %{?el8:%pyproject_install}
 %{?el9:%pyproject_install}
 %{?fedora:%pyproject_install}
