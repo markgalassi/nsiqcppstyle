@@ -67,7 +67,7 @@ Summary:        %{summary}
 
 # Here, "nsiqcppstyle" is the name of the importable module.
 #{?el7:python3.8 -m install --user --target $RPM_BUILD_ROOT/usr/lib/python3.8}
-%{?el8:%pyproject_save_files -l nsiqcppstyle}
+%{?el8:%pyproject_save_files nsiqcppstyle}
 %{?el9:%pyproject_save_files -l nsiqcppstyle}
 %{?fedora:%pyproject_save_files -l nsiqcppstyle}
 
