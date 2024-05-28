@@ -24,6 +24,8 @@ classifiers = [
 ]
 dependencies = []
 
+include = ["el7_only_bin_prog"]
+
 [project.scripts]
 nsiqcppstyle = "nsiqcppstyle.nsiqcppstyle_exe:main"
 
