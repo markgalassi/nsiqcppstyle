@@ -46,7 +46,7 @@ def RunRule(lexer, fullName, decl, contextStack, context):
                 lexer.GetNextMatchingGT()
             elif t.type == "COMMA":
                 if count == 1:
-                    nsiqcppstyle_reporter.Error(
+                    Error(
                         t2,
                         __name__,
                         "function (%s) has non named parameter. use named parameter." % fullName,
@@ -54,7 +54,7 @@ def RunRule(lexer, fullName, decl, contextStack, context):
                     break
                 count = 0
             elif rparen.lexpos <= t.lexpos and count == 1:
-                nsiqcppstyle_reporter.Error(
+                Error(
                     t2,
                     __name__,
                     "function (%s) has non named parameter. use named parameter." % fullName,
