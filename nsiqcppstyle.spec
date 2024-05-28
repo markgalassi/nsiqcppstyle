@@ -8,13 +8,23 @@ URL:            https://github.com/kunaltyagi/nsiqcppstyle
 #Source:         #{url}/archive/v#{version}/nsiqcppstyle-#{version}.tar.gz
 Source:         nsiqcppstyle-%{version}.tar.gz
 
+%{?el7:AutoReqProv: no}
+%undefine __pythondist_requires
+%undefine __python_requires
+
 BuildArch:      noarch
+
+Requires: rh-python38-python(abi) = 3.8
+%if 0%{?rhel} == 7
+Requires: rh-python38-python(abi) = 3.8
+%else
+BuildRequires: pyproject-rpm-macros
 BuildRequires: python3-devel
 BuildRequires: python3-tomli
 BuildRequires: python3-hatchling
 BuildRequires: python3-tox-current-env
-%{?el7:BuildRequires: python38-rpm-macros}x
-BuildRequires: pyproject-rpm-macros
+BuildRequires: python3-rpm-macros
+%endif
 
 %global _description %{expand:
 nsiqcppstyle is one of the most customizable cpp style
@@ -48,7 +58,7 @@ Summary:        %{summary}
 #{?el7:python3.8 -m pip install -- --install-scripts=#{_bindir} --install-data=#{_datadir}}
 #{?el7:#python3.8py3__python3 -m pip install --target ${RPM_BUILD_DIR}/usr}
 %{?el7:/opt/rh/rh-python38/root/usr/bin/python3.8 -m pip install -I dist/*.whl --target ${RPM_BUILD_ROOT}/%python38python3_sitelib}
-%{?el7:mkdir -p ${RPM_BUILD_ROOT}/usr/bin/nsiqcppstyle}
+%{?el7:mkdir -p ${RPM_BUILD_ROOT}/usr/bin}
 %{?el7:cp el7_only_bin_prog ${RPM_BUILD_ROOT}/usr/bin/nsiqcppstyle}
 #{?el7:#python3.8py3_install_wheel}
 #{?el7:#python38py3_install}
@@ -80,6 +90,6 @@ Summary:        %{summary}
 %{?fedora:%files -n python3-nsiqcppstyle -f %{pyproject_files}}
 %doc README.md
 %{_bindir}/*
-/opt/*
+/opt/rh/rh-python38/root/usr/lib/python3.8/*
 
 %changelog
