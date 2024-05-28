@@ -35,13 +35,19 @@ Summary:        %{summary}
 
 
 %build
-#py3_build
-%pyproject_wheel
+#py3_build                                                                                                                                 
+%{?el7:python3.8 -m build}
+%{?el8:%pyproject_wheel}
+%{?el9:%pyproject_wheel}
+%{?fedora:%pyproject_wheel}
 
 
 %install
-#py3_install
-%pyproject_install
+#py3_install                                                                                                                               
+%{?el7:python3.8 -m build}
+%{?el8:%pyproject_install}
+%{?el9:%pyproject_install}
+%{?fedora:%pyproject_install}
 
 # Here, "nsiqcppstyle" is the name of the importable module.
 %pyproject_save_files -l nsiqcppstyle

@@ -206,7 +206,7 @@ def ErrorInternal(t, ruleName, message):
     """
     Print error
     """
-    print('*error* - ', t, ruleName, message)
+    # print('*error* - ', t, ruleName, message)
     global rule
 
     # Remove the known prefix of "rules." from the path
