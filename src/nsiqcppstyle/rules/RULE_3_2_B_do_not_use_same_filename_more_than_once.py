@@ -26,7 +26,6 @@ from nsiqunittest.nsiqcppstyle_unittestbase import *
 
 filenameMap: Dict[str, List[str]] = {}
 
-
 def RunRule(lexer, filename, dirname):
     if filename.startswith("stdafx."):
         return
@@ -38,7 +37,7 @@ def RunRule(lexer, filename, dirname):
         filenameMap[filename].append(os.path.join(dirname, filename))
     else:
         filenameMap[filename].append(os.path.join(dirname, filename))
-        nsiqcppstyle_reporter.Error(
+        Error(
             DummyToken(lexer.filename, "", 0, 0),
             __name__,
             "Do not use same filename({}) more than once. This filename is used in {}".format(
