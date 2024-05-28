@@ -83,7 +83,11 @@ Summary:        %{summary}
 # For python3-nsiqcppstyle, %%{pyproject_files} handles code files and %%license,
 # but executables and documentation must be listed in the spec file:
 
+%if 0%{?rhel} != 7
 %files -n python3-nsiqcppstyle -f %{pyproject_files}
 /usr/bin/*
+%else
+%files -n python3-nsiqcppstyle
+%endif
 
 %changelog
