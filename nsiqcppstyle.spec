@@ -1,5 +1,5 @@
 Name:           python-nsiqcppstyle
-Version:        0.5.1
+Version:        0.6.0
 Release:        1%{?dist}
 Summary:        C++ style checker
 
